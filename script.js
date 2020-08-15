@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const tableDisplay = require('console.table');
+const chalk = require('chalk');
 
 
 //Boilerplate 
@@ -21,8 +22,7 @@ connection.connect(err => {
 
 //Initial User Choice
 function start() {
-    console.log("Welcome to your employee tracker");
-    console.log("- - - - - - - - - - - - - - -");
+    console.log(chalk.blue.bold("\nWelcome to your employee tracker\n"));
 	inquirer.prompt({
 		name: 'userSelect',
 		type: 'list',
@@ -70,11 +70,9 @@ function start() {
 
 //Shows all departments in the database
 function viewDepartments() {
-    console.log("working?");
     connection.query("SELECT * FROM department", function (err, data) {
         if (err) throw err;
         console.table(data);
-        console.log("- - - - - - - - - - - - - - -");
         //restart function
         start();
     });
@@ -85,7 +83,6 @@ function viewRoles() {
     connection.query("SELECT * FROM role", function (err, roles) {
         if (err) throw err;
         console.table(roles);
-        console.log("- - - - - - - - - - - - - - -");
         //restart function
         start();
     });
@@ -96,7 +93,6 @@ function viewEmployees() {
     connection.query("SELECT * FROM employee" , function (err, employees) {
         if (err) throw err;
         console.table(employees);
-        console.log("- - - - - - - - - - - - - - -");
         //restart function
         start();
     });
@@ -111,10 +107,9 @@ function addDepartment() {
     }).then(answer => {
         connection.query("INSERT INTO department (name) VALUES (?)", [answer.department], function(err, department) {
             if (err) throw err;
-            console.log("The department " + answer.department + " has been added");
-            console.log("- - - - - - - - - - - - - - -");
+            console.log(chalk.magenta.bold("\n Addition Successful "), "The department " + answer.department + " has been added\n");
             //restart function
-            start();
+            viewDepartments();
         });
     });
 }
@@ -140,10 +135,9 @@ function addRole() {
     ]). then(answers => {
         connection.query("INSERT INTO role (title, salary, departmentId) VALUES (?, ?, ?)", [answers.title, answers.salary, answers.id], function (err, role) {
             if (err) throw err;
-            console.log("The role " + answers.title + " has been added");
-            console.log("- - - - - - - - - - - - - - -");
+            console.log(chalk.magenta.bold("\n Addition Successful "),"The role " + answers.title + " has been added\n");
             //restart function
-            start();
+            viewRoles();
         });
     });
 }
@@ -169,15 +163,13 @@ function addEmployee() {
         {
             name: "managerId",
             type: "number",
-            message: "Enter employee ID"
+            message: "Enter employee manager's ID"
         }
     ]).then(answers => {
         connection.query("INSERT INTO employee (firstName, lastName, roleId, managerId) VALUES (?, ?, ?, ?)", [answers.firstName, answers.lastName, answers.roleId, answers.managerId], function(err, employee) {
             if (err) throw err;
-            console.log(Answers.firstName + " was added to employees");
-            console.log("- - - - - - - - - - - - - - -");
-            //restart function
-            start();
+            console.log(chalk.magenta.bold("\n Addition Successful "), answers.firstName + " was added to employees\n");
+            viewEmployees();
         });
     });
 }
@@ -198,11 +190,9 @@ function updateRole() {
     ]).then(answers => {
         connection.query("UPDATE employee SET roleID = ? WHERE id = ?", [answers.roleId, answers.employeeId], function(err, newRole) {
             if (err) throw err;
-            console.log("- - - - - - - - - - - - - - -");
-            console.log("Update successful");
-            console.log("- - - - - - - - - - - - - - -");
+            console.log(chalk.magenta.bold("\n Update Successful "), "ID of " + answers.roleId + " now has role of " + answers.employeeId + "\n");
             //restart function
-            start();
+            viewEmployees();
         });
     });
 }
