@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
     port: 3306,
     user: "root",
     //input password
-    password: "popcicle11",
+    password: "",
     database: "employeeDB"
 });
 
@@ -70,9 +70,9 @@ function start() {
 
 //Shows all departments in the database
 function viewDepartments() {
-    connection.query("SELECT * FROM department", function (err, data) {
+    connection.query("SELECT * FROM department", (err, departments) => {
         if (err) throw err;
-        console.table(data);
+        console.table(departments);
         //restart function
         start();
     });
@@ -80,7 +80,17 @@ function viewDepartments() {
 
 //Shows all roles in the database
 function viewRoles() {
-    connection.query("SELECT * FROM role", function (err, roles) {
+    var query = `
+    SELECT
+        role.id,
+        role.title As Title,
+        role.salary AS Salary,
+        department.name AS Department
+    FROM 
+        role
+    INNER JOIN department ON department.id = role.departmentId`;
+
+    connection.query(query, (err, roles) => {
         if (err) throw err;
         console.table(roles);
         //restart function
@@ -90,7 +100,21 @@ function viewRoles() {
 
 //Shows all employees in the database
 function viewEmployees() {
-    connection.query("SELECT * FROM employee" , function (err, employees) {
+    var query= `
+        SELECT 
+            e.id,
+            CONCAT(e.firstName, ' ', e.lastName) AS Employee,
+            role.title AS Position,
+            department.name AS Department,
+            role.salary AS Salery,
+            CONCAT(m.firstName, ' ', m.lastName) AS Manager
+        FROM
+            employee e
+        LEFT JOIN employee m ON m.id = e.managerId
+        INNER JOIN role ON e.roleId = role.id
+        INNER JOIN department ON role.departmentId = department.id`;
+  
+    connection.query(query, (err, employees) => {
         if (err) throw err;
         console.table(employees);
         //restart function
@@ -105,7 +129,7 @@ function addDepartment() {
         name: "department",
         message: "Enter new department: "
     }).then(answer => {
-        connection.query("INSERT INTO department (name) VALUES (?)", [answer.department], function(err, department) {
+        connection.query("INSERT INTO department (name) VALUES (?)", [answer.department], (err, department) => {
             if (err) throw err;
             console.log(chalk.magenta.bold("\n Addition Successful "), "The department " + answer.department + " has been added\n");
             //restart function
@@ -133,7 +157,7 @@ function addRole() {
             message: "Enter department ID: "
         }
     ]). then(answers => {
-        connection.query("INSERT INTO role (title, salary, departmentId) VALUES (?, ?, ?)", [answers.title, answers.salary, answers.id], function (err, role) {
+        connection.query("INSERT INTO role (title, salary, departmentId) VALUES (?, ?, ?)", [answers.title, answers.salary, answers.id], (err, role) => {
             if (err) throw err;
             console.log(chalk.magenta.bold("\n Addition Successful "),"The role " + answers.title + " has been added\n");
             //restart function
@@ -166,7 +190,7 @@ function addEmployee() {
             message: "Enter employee manager's ID"
         }
     ]).then(answers => {
-        connection.query("INSERT INTO employee (firstName, lastName, roleId, managerId) VALUES (?, ?, ?, ?)", [answers.firstName, answers.lastName, answers.roleId, answers.managerId], function(err, employee) {
+        connection.query("INSERT INTO employee (firstName, lastName, roleId, managerId) VALUES (?, ?, ?, ?)", [answers.firstName, answers.lastName, answers.roleId, answers.managerId], (err, employee) => {
             if (err) throw err;
             console.log(chalk.magenta.bold("\n Addition Successful "), answers.firstName + " was added to employees\n");
             viewEmployees();
@@ -188,7 +212,7 @@ function updateRole() {
             message: "Enter updated Role ID"
         }
     ]).then(answers => {
-        connection.query("UPDATE employee SET roleID = ? WHERE id = ?", [answers.roleId, answers.employeeId], function(err, newRole) {
+        connection.query("UPDATE employee SET roleID = ? WHERE id = ?", [answers.roleId, answers.employeeId], (err, newRole) => {
             if (err) throw err;
             console.log(chalk.magenta.bold("\n Update Successful "), "ID of " + answers.roleId + " now has role of " + answers.employeeId + "\n");
             //restart function
@@ -196,3 +220,5 @@ function updateRole() {
         });
     });
 }
+
+
