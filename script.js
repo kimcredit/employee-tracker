@@ -81,14 +81,14 @@ function viewDepartments() {
 //Shows all roles in the database
 function viewRoles() {
     var query = `
-    SELECT
-        role.id,
-        role.title As Title,
-        role.salary AS Salary,
-        department.name AS Department
-    FROM 
-        role
-    INNER JOIN department ON department.id = role.departmentId`;
+        SELECT
+            role.id,
+            role.title As Title,
+            role.salary AS Salary,
+            department.name AS Department
+        FROM 
+            role
+        INNER JOIN department ON department.id = role.departmentId`;
 
     connection.query(query, (err, roles) => {
         if (err) throw err;
