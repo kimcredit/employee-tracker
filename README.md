@@ -23,10 +23,17 @@ When the user runs the application, they are first provided with a list of tasks
 -  Update Employee Role
 -  Exit
 
-When the user chooses a view option, they are provided with a table showing the company's current data on that item. 
-When the user chooses an add option, they asked through a series of prompts to provide all necessary data for their addition. They are then shown an updated version of the corresponding table. 
-When the user chooses to update an employee role, they are asked to provide the ID of the employee they wish to update, and the ID of that employee's new role. They are then shown an updated version of the employees chart showing these changes. 
-When the user is done making changes to their database, they can choose exit to stop the program from running.
+When the user chooses a view option, they are provided with a table showing 
+the company's current data on that item. 
+
+When the user chooses an add option, they asked through a series of prompts 
+to provide all necessary data for their addition. They are then shown an 
+updated version of the corresponding table. 
+When the user chooses to update an employee role, they are asked to provide 
+the ID of the employee they wish to update, and the ID of that employee's new role. 
+They are then shown an updated version of the employees chart showing these changes. 
+When the user is done making changes to their database, they can choose exit to stop 
+the program from running.
 ```
 
 ## Credits
